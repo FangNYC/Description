@@ -1,28 +1,9 @@
 var db = require('./index.js');
 
 var names = [
-	'Benjamin Mangold',
-	'Bradley Morgan',
-	'David Weinzimmer',
-	'Dev Patel',
-	'Elizabeth Lang',
-	'Grant Diamond',
-	'Inderjeet Kaur',
-	'John Sangiolo',
-	'Kai Chen',
-	'Kenni Silverio',
-	'Kenny Polyak',
-	'Louis Otter',
-	'Maria Chung',
-	'Matthew Jones',
-	'Stacy Kim',
-	'Wyatt Troia',
-	'Christian Carter',
-	'Nicholas Eliades',
-	'Zhengqing Pei',
 	'Riley Egan'
 ]
-var room_type= [
+var room_type = [
 	'ENTIRE APARTMENT',
 	'ENTIRE LOFT',
 	'PRIVATE ROOM IN TOWNHOUSE',
@@ -31,7 +12,7 @@ var room_type= [
 	'PRIVATE ROOM IN GUEST SUITE'
 ]
 
-var room_type_details =[
+var room_type_details = [
 	'TriBeCa 2500 Sq Ft with Priv Elevator',
 	'Unique spacious loft on the Bowery',
 	'Charming duplex garden flat in SoHo',
@@ -43,7 +24,7 @@ var room_type_details =[
 	'Santorini StudioBed BrkfstWifi',
 	'Luxurious 5 Star room nr Airpor'
 ]
-var city =[
+var city = [
 	'Mumbai',
 	'London',
 	'New York',
@@ -69,7 +50,7 @@ var city_details = [
 	'5 Star Hotel-like modern & upscale, clean room with all high-end amenities verified by my guests in their reviews. You can read them. Early check-in & Late check-out will be subject to availabilityApartment is in a new buildingRoom is on the upper floor of my duplex flat & can be reached by stairs from my living room. I live on the lower floor.King size comfortable bed with good quality bed linensEnsuite (attached) bathroom with all essentials providedFree cable TV & Wifi'
 ]
 
-var listing_details=[
+var listing_details = [
 	'I live in a 5 bedroom duplex apartment on the 11th & 12th floor (top floor) of a modern newly constucted premium highrise building.It is very close to the Mumbai Domestic Airport, Grand Hyatt Hotel & BKC (Bandra Kurla Complex). BKC is the Corporate hub of Mumbai & has lots of restaurants and coffee shops. While my family and I live on the lower floor (11th floor), the room available to you is on the upper floor (12th floor) in my spacious home. The stairs to reach your room are from my living room. As your room is on the upper floor it will be quiet & you will have complete privacy.',
 	'Centrally Located. The private compact studio bedroom is on the ground floor in an old building and the single bedroom inside has a super nice Chic positive vibe. We welcome local residents as well as guests outside Bandra and from everywhere. Chilled out, positive atmosphere :) Its close to the airport approx 20 to 25 mins , 20 minutes to BKC US Embassy, close to the sea ( 5 mins ricksha ride/10 min walk) highly recommended for morning/ evening /night walk or jog, 2 min walk from Linking road( shopping hub, yet extremely peaceful road where we live), Pubs, Cafes, Restaurants, we have it all!'
 ]
@@ -78,37 +59,37 @@ var guest_access_details = [
 	'Staying at the private bedroom is like bringing your own room with you during your travel with everything very thoughtfully in place to make it easy for you to zip in and out during your travels. Its a cozy sparkling clean bedroom!! Please note - The studio bedroom as stated is a compact bedroom , if you are seeking a big spacious place to stay, this isnt the place as its a compact bedroom with huge king sized comfortable bed',
 ]
 
-var interaction_guests_details= [
+var interaction_guests_details = [
 	'Please order your breakfast in the evening latest by 8 pm by sending an sms which you will get when booking of room is complete. Breakfast is complimentary and widely appreciated by our guests for taste. Check the menu in the room and let us know before 8 at night, your breakfast preference for next morning with time. Guests can simply relax in the open front yard or read a book.',
 	'WiFi dongal is at your fingertips hence available to you exclusively in every part of the apartment, so you can well imagine sitting in the front yard under the open sky, being watched over by Buddha , sipping a hot cuppa and writing an email to your loved ones planning a quick visit to places of interests nearby.',
 	'The Studio bedroom Bandra west is a compact cute space right in the centre of Bandra Mumbai with walking distance from all hip places. If you are looking for huge spacious Space then plz note that the studio is a compact space not a huge spacious studio'
 ]
 
-var other_details =[
+var other_details = [
 	'Please order your breakfast in the evening latest by 8 pm by sending an sms which you will get when booking of room is complete. Breakfast is complimentary and widely appreciated by our guests for taste. Check the menu in the room and let us know before 8 at night, your breakfast preference for next morning with time. Guests can simply relax in the open front yard or read a book',
 	'WiFi dongal is at your fingertips hence available to you exclusively in every part of the apartment, so you can well imagine sitting in the front yard under the open sky, being watched over by Buddha , sipping a hot cuppa and writing an email to your loved ones planning a quick visit to places of interests nearby.',
 	'The Studio bedroom Bandra west is a compact cute space right in the centre of Bandra Mumbai with walking distance from all hip places. If you are looking for huge spacious Space then plz note that the studio is a compact space not a huge spacious studio'
 ]
 
 var ID = 1;
-for(var i = 0; i < 100; i++){
- 	var randroomType = room_type[Math.floor(Math.random() * room_type.length)];
- 	var randname = names[Math.floor(Math.random() * names.length)];
- 	var randroom_type_details = room_type_details[Math.floor(Math.random() * room_type_details.length)];
- 	var randcity = city[Math.floor(Math.random() * city.length)];
- 	var randcity_details = city_details[Math.floor(Math.random() * city_details.length)];
- 	var randlisting_details = listing_details[Math.floor(Math.random() * listing_details.length)];
- 	var randguest_access_details = guest_access_details[Math.floor(Math.random() * guest_access_details.length)];
- 	var randinteraction_guests_details = interaction_guests_details[Math.floor(Math.random() * interaction_guests_details.length)];
- 	var randother_details = other_details[Math.floor(Math.random() * other_details.length)];
- 	db.interstAll(ID,randname, randroomType, randroom_type_details, randcity, randcity_details, randlisting_details, randguest_access_details, randinteraction_guests_details, randother_details, function(err, result){
- 		if(err){
- 			console.log(err)
- 		}else{
- 			console.log(result)
- 		}
- 	})
- 	ID++
+for (var i = 0; i < 100; i++) {
+	var randroomType = room_type[Math.floor(Math.random() * room_type.length)];
+	var randname = names[Math.floor(Math.random() * names.length)];
+	var randroom_type_details = room_type_details[Math.floor(Math.random() * room_type_details.length)];
+	var randcity = city[Math.floor(Math.random() * city.length)];
+	var randcity_details = city_details[Math.floor(Math.random() * city_details.length)];
+	var randlisting_details = listing_details[Math.floor(Math.random() * listing_details.length)];
+	var randguest_access_details = guest_access_details[Math.floor(Math.random() * guest_access_details.length)];
+	var randinteraction_guests_details = interaction_guests_details[Math.floor(Math.random() * interaction_guests_details.length)];
+	var randother_details = other_details[Math.floor(Math.random() * other_details.length)];
+	db.interstAll(ID, randname, randroomType, randroom_type_details, randcity, randcity_details, randlisting_details, randguest_access_details, randinteraction_guests_details, randother_details, function (err, result) {
+		if (err) {
+			console.log(err)
+		} else {
+			console.log(result)
+		}
+	})
+	ID++
 
 }
 // randname, randroom_type_details, randcity, randcity_details, randlisting_details, randguest_access_details, randinteraction_guests_details, randother_details
