@@ -35,14 +35,102 @@ function Data() {
   this.otherDetails = buildPar(250);
 };
 
-for (var i = 1; i < 101; i++) {
-  ID = i;
-  var data = new Data;
-  db.interstAll(ID, data.name, data.roomType, data.roomTypeDetails, data.city, data.cityDetails, data.listingDetails, data.guestAccessDetails, data.interactionGuestsDetails, data.otherDetails, function (err, result) {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log(result);
+// for (var i = 0, promise = Promise.resolve(); i < 100; i++) {
+//   promise = promise.then(() => {
+//     new Promise((resolve) => {
+//         setTimeout(function () {
+//             console.log(i);
+//             resolve();
+//         }, 1000)
+//     })
+//   })
+// }
+
+
+
+
+
+// for (let i = 0, promise = Promise.resolve(); i < 10000000; i++) {
+//   promise = promise.then(() => (
+//     new Promise(
+      
+//       function (resolve) {
+//         ID = i+1;
+// var data = new Data;
+// db.interstAll(ID, data.name, data.roomType, data.roomTypeDetails, data.city, data.cityDetails, data.listingDetails, data.guestAccessDetails, data.interactionGuestsDetails, data.otherDetails, function (err, result) {
+//   if (err) {
+//     console.log(err);
+//   } else {
+//     console.log(result);
+//   }
+// });
+//         resolve();
+//         }
+
+//   )));
+// }
+
+
+
+
+
+// (async function loop() {
+//   for (let i = 0; i < 10; i++) {
+//       await new Promise(resolve => setTimeout(resolve, Math.random() * 1000));
+//       console.log(i);
+//   }
+// })();
+
+// ID = i+1;
+// var data = new Data;
+// db.interstAll(ID, data.name, data.roomType, data.roomTypeDetails, data.city, data.cityDetails, data.listingDetails, data.guestAccessDetails, data.interactionGuestsDetails, data.otherDetails, function (err, result) {
+//   if (err) {
+//     console.log(err);
+//   } else {
+//     console.log(result);
+//   }
+// });
+
+
+var count = 0;
+var totalSize = 100000;
+var batchSize = 10000;
+var wrapper = () => {
+  if(count >= totalSize) {
+    console.log('count complete: ', count);
+    return;
+  }
+  var promise = new Promise(
+    function(resolve) {
+    setTimeout(() => {
+    for (var i = 0; i < batchSize; i++) {
+      console.log(i)
+      count += 1;
+
+      ID = count;
+      var data = new Data;
+      db.interstAll(ID, data.name, data.roomType, data.roomTypeDetails, data.city, data.cityDetails, data.listingDetails, data.guestAccessDetails, data.interactionGuestsDetails, data.otherDetails, function (err, result) {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log(result);
+        }
+      });
+
+
+
+      if (i === batchSize-1) {
+        console.log('count step: ', count);
+        console.log('...now get the next batch')
+        resolve();
+      }
     }
+    }, 0)
+  });
+
+  promise.then(function() {
+    wrapper();
   });
 }
+
+wrapper();
