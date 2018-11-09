@@ -394,6 +394,81 @@ function Data() {
 
 // wrapper();
 
-for (var i = 0; i < arr)
 
-db.insertAny(0, 0, [1,2,3,4,5,6],[7,8,9,10,11,12],[7,8,9,10,11,12],[7,8,9,10,11,12]);
+
+
+
+
+
+
+//===========================================
+var insertNumOfRows = (numOfRows) => {
+  var all = [];
+  for (var i =0; i < numOfRows; i++) {
+    var data = new Data;
+    var arr = [JSON.stringify(data.name), JSON.stringify(data.roomType), JSON.stringify(data.roomTypeDetails), JSON.stringify(data.city), JSON.stringify(data.cityDetails), JSON.stringify(data.listingDetails), JSON.stringify(data.guestAccessDetails), JSON.stringify(data.interactionGuestsDetails), JSON.stringify(data.otherDetails)];
+    all.push(arr);
+  }
+  db.insertAny(0, 0, ...all);
+}
+//===========================================
+
+// insertNumOfRows(5);
+
+
+
+
+
+var today = new Date();
+var startMinutes = ((today.getHours() * 60) + today.getMinutes());
+var startSeconds = today.getSeconds();
+
+
+var count = 0;
+var totalSize = 100000;
+var batchSize = 10000;
+var wrapper = () => {
+  if(count >= totalSize) {
+    console.log('count complete: ', count);
+    return;
+  }
+  var promise = new Promise(
+    function(resolve) {
+    //setTimeout(() => {
+      count += 1;
+      var data = new Data;
+      db.interstAll(data.name, data.roomType, data.roomTypeDetails, data.city, data.cityDetails, data.listingDetails, data.guestAccessDetails, data.interactionGuestsDetails, data.otherDetails, function (err, result) {
+        if (err) {
+          console.log(err);
+        } else {
+          // console.log('added: ', count)
+          // const used = process.memoryUsage().heapUsed / 1024 / 1024;
+          // console.log(`The script uses approximately ${Math.round(used * 100) / 100} MB`);
+          // if (count === 100 || count === 1000 || count % 10000 === 0 || count === 100000 || count === 1000000) {
+          //   const used = process.memoryUsage().heapUsed / 1024 / 1024;
+          //   console.log(`The script uses approximately ${Math.round(used * 100) / 100} MB`);
+          //   console.log('count: ', count);
+          // }
+          if (count === 10000) {
+            console.log ('reached: ', count);
+            var today = new Date();
+
+            var minutes = ((today.getHours() * 60) + today.getMinutes()) - startMinutes;
+            var seconds = today.getSeconds() - startSeconds;
+
+            console.log('time elapsed:', minutes, 'm : ', seconds, 's');
+
+          }
+          resolve();
+        }
+      });
+
+    //}, 0)
+  });
+
+  promise.then(function() {
+    wrapper();
+  });
+}
+
+wrapper();
