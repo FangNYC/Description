@@ -62,7 +62,7 @@ var insertNumOfRows = (numOfRows, callback) => {
   //========
   //
   var count = 0;
-  var totalSize = 10000000;
+  var totalSize = 100000;
   var wrapper = () => {
     //========
     //base case: if total size is reached, log the count and the time elapsed, exit the function
