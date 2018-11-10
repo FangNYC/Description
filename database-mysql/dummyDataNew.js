@@ -1,3 +1,6 @@
+//Developer's note:  This file is a work in progress, many functions were created for testing/development purposes.  Please ignore contents for review.
+
+
 var faker = require('faker');
 var db = require('./index.js');
 
@@ -528,9 +531,8 @@ var insertNumOfRows = (numOfRows, callback) => {
 //================================
 var simulInsert = (numOfInserts, numOfRows, callback) => {
   for (let i = 1; i < numOfInserts + 1; i++) {
-    console.log('i: ', i);
-    const used = process.memoryUsage().heapUsed / 1024 / 1024;
-    console.log(`The script uses approximately ${Math.round(used * 100) / 100} MB`);
+    // const used = process.memoryUsage().heapUsed / 1024 / 1024;
+    // console.log(`The script uses approximately ${Math.round(used * 100) / 100} MB`);
     insertNumOfRows(numOfRows, () => {
       // console.log('insert occured');
       // console.log('current insert: ', i)
@@ -538,6 +540,7 @@ var simulInsert = (numOfInserts, numOfRows, callback) => {
       if (i === numOfInserts) {
         // console.log('about to resolve')
         // console.log('this is the last insert : ', i,'/', numOfInserts)
+        // console.log('i: ', i);
         callback();
       } 
     });

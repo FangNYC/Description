@@ -35,26 +35,27 @@ var interstAll = function (randname, randroomType, randroom_type_details, randci
 };
 
 var insertAny = (numOfRows, callback, ...args) => {
-  var sql = 'INSERT INTO listing_description (user_name, room_type, room_type_details, city, city_details, listing_details, guest_access_details, interaction_guests_details, other_details) VALUES';
-  for (var i = 0; i < args.length; i++) {
-    sql = sql + `(`
-    for (var j = 0; j < args[i].length; j++) {
-      sql = sql + `${args[i][j]}`;
-      if (j !== args[i].length - 1) {
-        sql = sql + `, `;
-      }
-    }
-    sql = sql + `)`;
-    if (i !== args.length -1){
-      sql =sql + `, `
-    }
-  }
-  // console.log(sql);
-  connection.query(sql, (err, results) => {
-    if (err) console.log(err);
-    else callback();
-    // else console.log(results);
-  });
+  // var sql = 'INSERT INTO listing_description (user_name, room_type, room_type_details, city, city_details, listing_details, guest_access_details, interaction_guests_details, other_details) VALUES';
+  // for (var i = 0; i < args.length; i++) {
+  //   sql = sql + `(`
+  //   for (var j = 0; j < args[i].length; j++) {
+  //     sql = sql + `${args[i][j]}`;
+  //     if (j !== args[i].length - 1) {
+  //       sql = sql + `, `;
+  //     }
+  //   }
+  //   sql = sql + `)`;
+  //   if (i !== args.length -1){
+  //     sql =sql + `, `
+  //   }
+  // }
+  // // console.log(sql);
+  // connection.query(sql, (err, results) => {
+  //   if (err) console.log(err);
+  //   else callback();
+  //   // else console.log(results);
+  // });
+  callback();
 }
 
 module.exports.insertAny = insertAny;
