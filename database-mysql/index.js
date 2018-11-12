@@ -4,13 +4,34 @@ var mysqlConfig = require('../config.js');
 var password = require('../config.js').amazonPassword;
 
 const connection = mysql.createConnection(mysqlConfig);
-// var connection = mysql.createConnection({
-//   host: 'listings.cgs4awlnkox5.us-east-2.rds.amazonaws.com',
-//   user: 'dhpatel15',
-//   password: password,
-//   database: 'listings',
-//   port: 3306
-// });
+
+var runSchema = (schema, i, cb) => {
+  if (i === schema.length) {
+    connection.end();
+    cb();
+    return;
+  };
+  var promise = new Promise(
+    function(resolve) {
+      connection.query(schema[i], (err, results) =>  {
+        if (err) console.log(err);
+        else (resolve());
+        //console.log(results);
+      });
+  });
+  promise.then(function() {
+    var message = {
+      0: 'Dropped Database Listings',
+      1: 'Created Database Listings',
+      2: 'Used Database Listings',
+      3: 'Created Table Listing Description With Fields'
+    };
+    console.log('Step ', i+1, ': ', message[i]);
+    runSchema(schema, i+1, cb);
+  });
+};
+
+var reconnect = () => {connection.connect();};
 
 var selectAll = function (id, callback) {
   var sql = 'SELECT * FROM listing_description WHERE unique_ID=(?)'
@@ -58,6 +79,8 @@ var insertAny = (numOfRows, callback, ...args) => {
   callback();
 }
 
+module.exports.reconnect = reconnect;
+module.exports.runSchema = runSchema;
 module.exports.insertAny = insertAny;
 module.exports.selectAll = selectAll;
 module.exports.interstAll = interstAll;

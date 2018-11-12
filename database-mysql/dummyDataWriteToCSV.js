@@ -4,6 +4,7 @@
 var faker = require('faker');
 var db = require('./index.js');
 var fs = require('fs');
+var runSchema = require('./runSchema.js');
 //======================================
 //helper function that builds paragraphs of a specified character length
 var buildPar = (char) => {
@@ -65,33 +66,40 @@ var saveRows = (numOfRows, callback) => {
   stream.end( () => {});
 }
 //======================================
+//object with start and stop methods that can be invoked to measure elapsed time
+var timer = {};
+timer.start = () => {
+  timer.today = new Date();
+  timer.startMinutes = ((timer.today.getHours() * 60) + timer.today.getMinutes());
+  timer.startSeconds = timer.today.getSeconds();
+  timer.startMilliseconds = timer.today.getMilliseconds();
+};
+timer.stop = () => {
+  timer.today = new Date();
+  timer.minutes = ((timer.today.getHours() * 60) + timer.today.getMinutes()) - timer.startMinutes;
+  timer.seconds = timer.today.getSeconds() - timer.startSeconds;
+  timer.milliseconds = timer.today.getMilliseconds() - timer.startMilliseconds;
+  if (timer.seconds < 0) {
+    timer.minutes -= 1;
+    timer.seconds = 60 + timer.seconds;
+  }
+  if (timer.milliseconds < 0) {
+    timer.seconds -= 1;
+    timer.milliseconds = 999 + timer.milliseconds;
+  }
+  console.log('time elapsed:', timer.minutes, 'm : ', timer.seconds, 's : ', timer.milliseconds, 'ms');
+};
+//======================================
 //function that inserts the specified number of rows, and global variables
-var today = new Date();
-var startMinutes = ((today.getHours() * 60) + today.getMinutes());
-var startSeconds = today.getSeconds();
-var startMilliseconds = today.getMilliseconds();
-//========
-//
 var count = 0;
-var totalSize = 1000000;
+var totalSize = 100;
 var wrapper = () => {
+  if(count === 0) timer.start();
   //========
   //base case: if total size is reached, log the count and the time elapsed, exit the function
   if(count >= totalSize) {
     console.log('count complete: ', count);
-    var today = new Date();
-    var minutes = ((today.getHours() * 60) + today.getMinutes()) - startMinutes;
-    var seconds = today.getSeconds() - startSeconds;
-    var milliseconds = today.getMilliseconds() - startMilliseconds;
-    if (seconds < 0) {
-      minutes -= 1;
-      seconds = 60 + seconds;
-    }
-    if (milliseconds < 0) {
-      seconds -= 1;
-      milliseconds = 999 + milliseconds;
-    }
-    console.log('time elapsed:', minutes, 'm : ', seconds, 's : ', milliseconds, 'ms');
+    timer.stop();
     return;
   }
   //========
@@ -110,4 +118,15 @@ var wrapper = () => {
 }
 //========
 //starts the process
-wrapper();
+var promise = new Promise(
+  (resolve) => {
+    runSchema.runSchema(
+      () => {
+        resolve();
+      }
+    );
+  }
+)
+promise.then(function() {
+  wrapper();
+});
