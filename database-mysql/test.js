@@ -112,8 +112,59 @@ var startMilliseconds = today.getMilliseconds();
 //     sentence = sentence + ' ' + randoSent;
 // }
 
+var storage = {
+  prefix : {'Mr.':'Mr.', 'Mrs.':'Mrs.', 'Ms.':'Ms.', 'Miss':'Miss', 'Mister':'Mister', 'Dr.':'Dr.', 'Sir':'Sir'},
+  first : {},
+  last : {},
+  suffix : {}
+}
 
+prefixExists = false;
+firstExists = false;
+lastExists = false;
+for (var t = 0; t < 10; t++) {
+  function Data() {
+    this.name = faker.name.findName();
+  }
+  var data = new Data;
+  var name = data.name.split(' ');
+  console.log(t)
+  for (var i = 0; i < name.length; i++) {
+    console.log(name[i])
+    if (i === 0) {
+      for (var j = 0; j < name[i].length; j++) {
+        if (name[i][j] === '.') {
+          storage.prefix[name[i]] = name[i];
+          prefixExists = true;
+        }
+      }
+      if (storage.prefix[name[i]]) {
+        prefixExists = true;
+      } else if (prefixExists === false) {
+        storage.first[name[i]] = name[i];
+        firstExists = true;
+      }
+    } else if ( i === 1 ) {
+      if (prefixExists) {
+        storage.first[name[i]] = name[i];
+        firstExists = true;
+      } else if (firstExists) {
+        storage.last[name[i]] = name[i];
+        lastExists = true;
+      }
+    } else if (i === 2) {
+      if (prefixExists) {
+        storage.last[name[i]] = name[i];
+        lastExists = true;
+      } else if (lastExists) {
+        storage.suffix[name[i]] = name[i];
+      }
+    }
+  }
+  
+}
 
+console.log(storage);
 
 
 var today = new Date();
@@ -133,6 +184,6 @@ console.log('time elapsed:', minutes, 'm : ', seconds, 's : ', milliseconds, 'ms
 
 
 
-sentence = sentence.split(' ');
-console.log(sentence[sentence.length-1]);
-console.log(sentence.length);
+// sentence = sentence.split(' ');
+// console.log(sentence[sentence.length-1]);
+// console.log(sentence.length);

@@ -1,25 +1,13 @@
 //======================================
 //estimated time to completion: 30.32 minutes
 //======================================
+const { exec } = require('child_process');
+const { buildPar } = require('./randomData.js');
 var faker = require('faker');
 var db = require('./index.js');
 var fs = require('fs');
 var runSchema = require('./runSchema.js');
-//======================================
-//helper function that builds paragraphs of a specified character length
-var buildPar = (char) => {
-  var par = '';
-  var recurse = () => {
-    if (par.length >= char) {
-      return;
-    } else {
-      par = par + faker.lorem.sentence() + ' ';
-      recurse();
-    }
-  };
-  recurse();
-  return par;
-};
+
 //======================================
 //constructor function that generates random realistic data
 function Data() {
@@ -92,7 +80,7 @@ timer.stop = () => {
 //======================================
 //function that inserts the specified number of rows, and global variables
 var count = 0;
-var totalSize = 100;
+var totalSize = 100000;
 var wrapper = () => {
   if(count === 0) timer.start();
   //========
@@ -120,6 +108,12 @@ var wrapper = () => {
 //starts the process
 var promise = new Promise(
   (resolve) => {
+    exec('rm dummyData.csv', (err, result) => {
+      if(err) console.log('dummyData.csv already does not exist');
+      else console.log('dummyData.csv was deleted');
+      console.log();
+      console.log('Building Schema:')
+    });
     runSchema.runSchema(
       () => {
         resolve();
@@ -127,6 +121,8 @@ var promise = new Promise(
     );
   }
 )
+
 promise.then(function() {
+  console.log();
   wrapper();
 });
