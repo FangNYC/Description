@@ -1,45 +1,34 @@
 //======================================
 //estimated time to completion: 30.32 minutes
 //======================================
+const { exec } = require('child_process');
+const random = require('./randomData.js');
 var faker = require('faker');
 var db = require('./index.js');
 var fs = require('fs');
 var runSchema = require('./runSchema.js');
-//======================================
-//helper function that builds paragraphs of a specified character length
-var buildPar = (char) => {
-  var par = '';
-  var recurse = () => {
-    if (par.length >= char) {
-      return;
-    } else {
-      par = par + faker.lorem.sentence() + ' ';
-      recurse();
-    }
-  };
-  recurse();
-  return par;
-};
+
+
+
+var cluster = require('cluster');
+
+
+
+
+
 //======================================
 //constructor function that generates random realistic data
 function Data() {
-  this.name = faker.name.findName();
-  this.roomType = [
-    'ENTIRE APARTMENT',
-    'ENTIRE LOFT',
-    'PRIVATE ROOM IN TOWNHOUSE',
-    'PRIVATE ROOM IN APARTMENT',
-    'PRIVATE ROOM',
-    'PRIVATE ROOM IN GUEST SUITE'
-  ];
+  this.name = random.buildName();
+  this.roomType = random.buildRoom;
   this.roomType = this.roomType[Math.floor(Math.random() * this.roomType.length)];
-  this.roomTypeDetails = buildPar(40);
+  this.roomTypeDetails = random.buildPar(40);
   this.city = faker.address.city();
-  this.cityDetails = buildPar(375);
-  this.listingDetails = buildPar(600);
-  this.guestAccessDetails = buildPar(450);
-  this.interactionGuestsDetails = buildPar(300);
-  this.otherDetails = buildPar(250);
+  this.cityDetails = random.buildPar(375);
+  this.listingDetails = random.buildPar(600);
+  this.guestAccessDetails = random.buildPar(450);
+  this.interactionGuestsDetails = random.buildPar(300);
+  this.otherDetails = random.buildPar(250);
 };
 //======================================
 //helper function that builds an array of data rows that are then passed to the insertAny function
@@ -50,7 +39,8 @@ var saveRows = (numOfRows, callback) => {
     // arr.push([JSON.stringify(data.name), JSON.stringify(data.roomType), JSON.stringify(data.roomTypeDetails), JSON.stringify(data.city), JSON.stringify(data.cityDetails), JSON.stringify(data.listingDetails), JSON.stringify(data.guestAccessDetails), JSON.stringify(data.interactionGuestsDetails), JSON.stringify(data.otherDetails), '\n']);
     str = str + data.name + ', ' + data.roomType + ', ' + data.roomTypeDetails + ', ' + data.city + ', ' + data.cityDetails + ', ' + data.listingDetails + ', ' + data.guestAccessDetails + ', ' + data.interactionGuestsDetails + ', ' + data.otherDetails + ',' + '\n';
   }
-  str = str + '\n';
+  //str = str + '\n';
+
   // fs.appendFile('./dummyData.csv', str, (err) => {
   //   if(err) throw err;
   //   count += numOfRows;
@@ -58,55 +48,71 @@ var saveRows = (numOfRows, callback) => {
   // })
   // count += numOfRows;
   // callback();
-  let stream = fs.createWriteStream('./dummyData.csv');
+  let stream = fs.createWriteStream(`./dummyData${uniqueId}.csv`, {flags: 'a'});
   stream.write(str);
-  stream.on('finish', () => {
+  // stream.on('finish', () => {
+  //   count += numOfRows;
+  //   callback();
+  //   });
+  stream.end( () => {
     count += numOfRows;
-    callback()});
-  stream.end( () => {});
+      callback();
+  });
 }
 //======================================
 //object with start and stop methods that can be invoked to measure elapsed time
 var timer = {};
+var uniqueId = 1;
 timer.start = () => {
-  timer.today = new Date();
-  timer.startMinutes = ((timer.today.getHours() * 60) + timer.today.getMinutes());
-  timer.startSeconds = timer.today.getSeconds();
-  timer.startMilliseconds = timer.today.getMilliseconds();
+  this.today = new Date();
+  this.startMinutes = ((this.today.getHours() * 60) + this.today.getMinutes());
+  this.startSeconds = this.today.getSeconds();
+  this.startMilliseconds = this.today.getMilliseconds();
+  uniqueId = (this.startMinutes * 100000) + (this.startSeconds * 1000) + this.startMilliseconds;
+  //console.log('start time:', this.startMinutes, 'm : ', this.startSeconds, 's : ', this.startMilliseconds, 'ms');
 };
 timer.stop = () => {
-  timer.today = new Date();
-  timer.minutes = ((timer.today.getHours() * 60) + timer.today.getMinutes()) - timer.startMinutes;
-  timer.seconds = timer.today.getSeconds() - timer.startSeconds;
-  timer.milliseconds = timer.today.getMilliseconds() - timer.startMilliseconds;
-  if (timer.seconds < 0) {
-    timer.minutes -= 1;
-    timer.seconds = 60 + timer.seconds;
+  this.today = new Date();
+  this.minutes = ((this.today.getHours() * 60) + this.today.getMinutes()) - this.startMinutes;
+  this.seconds = this.today.getSeconds() - this.startSeconds;
+  this.milliseconds = this.today.getMilliseconds() - this.startMilliseconds;
+  if (this.seconds < 0) {
+    this.minutes -= 1;
+    this.seconds = 60 + this.seconds;
   }
-  if (timer.milliseconds < 0) {
-    timer.seconds -= 1;
-    timer.milliseconds = 999 + timer.milliseconds;
+  if (this.milliseconds < 0) {
+    this.seconds -= 1;
+    this.milliseconds = 999 + this.milliseconds;
   }
-  console.log('time elapsed:', timer.minutes, 'm : ', timer.seconds, 's : ', timer.milliseconds, 'ms');
+  console.log('time elapsed:', this.minutes, 'm : ', this.seconds, 's : ', this.milliseconds, 'ms');
 };
+
 //======================================
 //function that inserts the specified number of rows, and global variables
 var count = 0;
-var totalSize = 100;
+var totalSize = 100000;
 var wrapper = () => {
-  if(count === 0) timer.start();
+  if(count === 0) {
+    console.log('wrapper was invoked');
+    timer.start();
+    // var uniqueId = parseInt(timer.startMinutes) * parseInt(timer.startMilliseconds) * parseInt(timer.startSeconds);
+    // console.log('unique id: ', uniqueId)
+  }
   //========
   //base case: if total size is reached, log the count and the time elapsed, exit the function
   if(count >= totalSize) {
-    console.log('count complete: ', count);
     timer.stop();
+    db.insertFromCSV(`./dummyData${uniqueId}.csv`, () => {
+      console.log('count complete: ', count);
+      timer.stop();
+    })
     return;
   }
   //========
   //promise that resolves when a batch is done inserting
   var promise = new Promise(
     function(resolve) {
-      saveRows(125, () => {
+      saveRows(250, () => {
           resolve();
       });
   });
@@ -116,17 +122,22 @@ var wrapper = () => {
     wrapper();
   });
 }
-//========
-//starts the process
-var promise = new Promise(
-  (resolve) => {
-    runSchema.runSchema(
-      () => {
-        resolve();
-      }
-    );
-  }
-)
-promise.then(function() {
+
+
+
+//start process on multiple cores
+if (cluster.isWorker) {
+  //invoke process
+  console.log('worker is running')
+  runSchema.useDB(
+    () => {
+      console.log('using lsitings database')
+    });
   wrapper();
-});
+} else {
+  //master
+  console.log('worker 1 initiated')
+  cluster.fork();
+  console.log('worker 2 initiated')
+  cluster.fork();
+}

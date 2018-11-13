@@ -5,7 +5,7 @@ var password = require('../config.js').amazonPassword;
 
 const connection = mysql.createConnection(mysqlConfig);
 
-var runSchema = (schema, i, cb) => {
+var runSchema = (schema, i, cb, j) => {
   if (i === schema.length) {
     connection.end();
     cb();
@@ -27,7 +27,7 @@ var runSchema = (schema, i, cb) => {
       3: 'Created Table Listing Description With Fields'
     };
     console.log('Step ', i+1, ': ', message[i]);
-    runSchema(schema, i+1, cb);
+    if(i !== j) runSchema(schema, i+1, cb);
   });
 };
 
@@ -79,6 +79,19 @@ var insertAny = (numOfRows, callback, ...args) => {
   callback();
 }
 
+var insertFromCSV = (filename, cb) => {
+  sql =`LOAD DATA LOCAL INFILE  '${filename}'
+  INTO TABLE listing_description 
+  FIELDS TERMINATED BY ',' 
+  LINES TERMINATED BY '\n';`
+  connection.query(sql, (err) => {
+    if (err) console.log(err);
+    else cb();
+    connection.end();
+  })
+}
+
+module.exports.insertFromCSV = insertFromCSV;
 module.exports.reconnect = reconnect;
 module.exports.runSchema = runSchema;
 module.exports.insertAny = insertAny;

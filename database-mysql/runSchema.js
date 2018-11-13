@@ -10,4 +10,9 @@ var runSchema = (cb) => {
     db.runSchema(schema, 0, cb);
 };
 
+var useDB = (cb) => {
+    db.runSchema(schema, 2, cb, 2);
+}
+
+module.exports.useDB = useDB;
 module.exports.runSchema = runSchema;
