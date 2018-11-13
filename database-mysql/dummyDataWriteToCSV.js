@@ -15,7 +15,6 @@ var cluster = require('cluster');
 
 
 
-
 //======================================
 //constructor function that generates random realistic data
 function Data() {
@@ -62,13 +61,13 @@ var saveRows = (numOfRows, callback) => {
 //======================================
 //object with start and stop methods that can be invoked to measure elapsed time
 var timer = {};
-var uniqueId = 1;
+// var uniqueId = 1;
 timer.start = () => {
   this.today = new Date();
   this.startMinutes = ((this.today.getHours() * 60) + this.today.getMinutes());
   this.startSeconds = this.today.getSeconds();
   this.startMilliseconds = this.today.getMilliseconds();
-  uniqueId = (this.startMinutes * 100000) + (this.startSeconds * 1000) + this.startMilliseconds;
+  // uniqueId = (this.startMinutes * 100000) + (this.startSeconds * 1000) + this.startMilliseconds;
   //console.log('start time:', this.startMinutes, 'm : ', this.startSeconds, 's : ', this.startMilliseconds, 'ms');
 };
 timer.stop = () => {
@@ -128,10 +127,11 @@ var wrapper = () => {
 //start process on multiple cores
 if (cluster.isWorker) {
   //invoke process
-  console.log('worker is running')
+  console.log(`worker ${process.pid} is running`)
+  var uniqueId = process.pid;
   runSchema.useDB(
     () => {
-      console.log('using lsitings database')
+      console.log('using listings database')
     });
   wrapper();
 } else {
