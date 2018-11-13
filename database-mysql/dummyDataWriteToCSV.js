@@ -102,7 +102,7 @@ var wrapper = () => {
   //base case: if total size is reached, log the count and the time elapsed, exit the function
   if(count >= totalSize) {
     timer.stop();
-    db.insertFromCSV(`./dummyData${uniqueId}.csv`, () => {
+    db.insertFromCSV(`dummyData${uniqueId}`, () => {
       console.log('count complete: ', count);
       timer.stop();
     })

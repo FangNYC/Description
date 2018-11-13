@@ -80,14 +80,25 @@ var insertAny = (numOfRows, callback, ...args) => {
 }
 
 var insertFromCSV = (filename, cb) => {
-  sql =`LOAD DATA LOCAL INFILE  '${filename}'
-  INTO TABLE listing_description 
-  FIELDS TERMINATED BY ',' 
-  LINES TERMINATED BY '\n';`
+
+  var loadData = () =>{
+    var sql =`LOAD DATA LOCAL INFILE  './${filename}.csv'
+    INTO TABLE ${filename} 
+    FIELDS TERMINATED BY ',' 
+    LINES TERMINATED BY '\n';`
+    connection.query(sql, (err) => {
+      console.log('data loaded');
+      if (err) console.log(err);
+      else cb();
+      connection.end();
+    })
+  }
+
+  var sql = `CREATE TABLE ${filename} (id INT(11) AUTO_INCREMENT NOT NULL, room_type MEDIUMTEXT, user_name MEDIUMTEXT, room_type_details MEDIUMTEXT, city MEDIUMTEXT, city_details MEDIUMTEXT, listing_details MEDIUMTEXT, guest_access_details MEDIUMTEXT, interaction_guests_details MEDIUMTEXT, other_details MEDIUMTEXT, PRIMARY KEY (id));`
   connection.query(sql, (err) => {
+    console.log(filename, ' table added');
     if (err) console.log(err);
-    else cb();
-    connection.end();
+    else loadData();
   })
 }
 
