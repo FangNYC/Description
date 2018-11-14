@@ -5,3 +5,9 @@ time elapsed: 0 m :  11 s :  980 ms
 100,000 saved from 4 cores to 4 csv files
 time elapsed: 0 m :  12 s :  697 ms
 
+
+
+Generated 10,000,000 records in a file of 22.64 GB
+    - 4 cores, 1 csv file
+time elapsed: 4 m :  49 s :  568 ms
+time elapsed: 4 m :  41 s :  55 ms

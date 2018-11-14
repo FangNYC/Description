@@ -69,7 +69,7 @@ timer.stop = () => {
 //======================================
 //function that inserts the specified number of rows, and global variables
 var count = 0;
-var totalSize = 100000;
+var totalSize = 2500000;
 var dbms = 'mysql';
 var wrapper = () => {
   if(count === 0) {
