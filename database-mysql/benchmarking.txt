@@ -1,0 +1,7 @@
+400,000 saved from 4 cores to 1 csv file
+time elapsed: 0 m :  12 s :  751 ms
+time elapsed: 0 m :  11 s :  980 ms
+
+100,000 saved from 4 cores to 4 csv files
+time elapsed: 0 m :  12 s :  697 ms
+

@@ -3,16 +3,12 @@
 //======================================
 const { exec } = require('child_process');
 const random = require('./randomData.js');
-var faker = require('faker');
-var db = require('./index.js');
-var fs = require('fs');
-var runSchema = require('./runSchema.js');
-
-
-
-var cluster = require('cluster');
-
-
+const faker = require('faker');
+const db = require('./index.js');
+const fs = require('fs');
+const runSchema = require('./runSchema.js');
+const DBMS = require('./DBMS.js');
+const cluster = require('cluster');
 
 
 //======================================
@@ -35,24 +31,10 @@ var saveRows = (numOfRows, callback) => {
   var str = '';
   for (var i =0; i < numOfRows; i++) {
     var data = new Data;
-    // arr.push([JSON.stringify(data.name), JSON.stringify(data.roomType), JSON.stringify(data.roomTypeDetails), JSON.stringify(data.city), JSON.stringify(data.cityDetails), JSON.stringify(data.listingDetails), JSON.stringify(data.guestAccessDetails), JSON.stringify(data.interactionGuestsDetails), JSON.stringify(data.otherDetails), '\n']);
     str = str + data.name + ', ' + data.roomType + ', ' + data.roomTypeDetails + ', ' + data.city + ', ' + data.cityDetails + ', ' + data.listingDetails + ', ' + data.guestAccessDetails + ', ' + data.interactionGuestsDetails + ', ' + data.otherDetails + ',' + '\n';
   }
-  //str = str + '\n';
-
-  // fs.appendFile('./dummyData.csv', str, (err) => {
-  //   if(err) throw err;
-  //   count += numOfRows;
-  //   callback();
-  // })
-  // count += numOfRows;
-  // callback();
-  let stream = fs.createWriteStream(`./dummyData${uniqueId}.csv`, {flags: 'a'});
+  let stream = fs.createWriteStream(`./dummyData.csv`, {flags: 'a'});
   stream.write(str);
-  // stream.on('finish', () => {
-  //   count += numOfRows;
-  //   callback();
-  //   });
   stream.end( () => {
     count += numOfRows;
       callback();
@@ -61,13 +43,11 @@ var saveRows = (numOfRows, callback) => {
 //======================================
 //object with start and stop methods that can be invoked to measure elapsed time
 var timer = {};
-// var uniqueId = 1;
 timer.start = () => {
   this.today = new Date();
   this.startMinutes = ((this.today.getHours() * 60) + this.today.getMinutes());
   this.startSeconds = this.today.getSeconds();
   this.startMilliseconds = this.today.getMilliseconds();
-  // uniqueId = (this.startMinutes * 100000) + (this.startSeconds * 1000) + this.startMilliseconds;
   //console.log('start time:', this.startMinutes, 'm : ', this.startSeconds, 's : ', this.startMilliseconds, 'ms');
 };
 timer.stop = () => {
@@ -89,19 +69,18 @@ timer.stop = () => {
 //======================================
 //function that inserts the specified number of rows, and global variables
 var count = 0;
-var totalSize = 200000;
+var totalSize = 100000;
+var dbms = 'mysql';
 var wrapper = () => {
   if(count === 0) {
     console.log('wrapper was invoked');
     timer.start();
-    // var uniqueId = parseInt(timer.startMinutes) * parseInt(timer.startMilliseconds) * parseInt(timer.startSeconds);
-    // console.log('unique id: ', uniqueId)
   }
   //========
   //base case: if total size is reached, log the count and the time elapsed, exit the function
   if(count >= totalSize) {
     timer.stop();
-    db.insertFromCSV(`dummyData${uniqueId}`, () => {
+    DBMS.insertFromCSV(dbms, `dummyData`, () => {
       console.log('count complete: ', count);
       timer.stop();
     })
@@ -122,13 +101,10 @@ var wrapper = () => {
   });
 }
 
-
-
 //start process on multiple cores
 if (cluster.isWorker) {
   //invoke process
-  console.log(`worker ${process.pid} is running`)
-  var uniqueId = process.pid;
+  console.log(`worker running on thread #${process.pid}`)
   runSchema.useDB(
     () => {
       console.log('using listings database')
@@ -136,8 +112,9 @@ if (cluster.isWorker) {
   wrapper();
 } else {
   //master
-  console.log('worker 1 initiated')
-  cluster.fork();
-  console.log('worker 2 initiated')
-  cluster.fork();
+  var cpuCount = require('os').cpus().length;
+  for (var i = 0; i < cpuCount; i++) {
+    console.log(`worker ${i + 1} initiated`)
+    cluster.fork();
+  }
 }
