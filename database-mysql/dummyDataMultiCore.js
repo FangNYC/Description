@@ -9,6 +9,7 @@ const fs = require('fs');
 const runSchema = require('./runSchema.js');
 const DBMS = require('./DBMS.js');
 const cluster = require('cluster');
+const cpuCount = require('os').cpus().length;
 
 
 //======================================
@@ -65,11 +66,28 @@ timer.stop = () => {
   }
   console.log('time elapsed:', this.minutes, 'm : ', this.seconds, 's : ', this.milliseconds, 'ms');
 };
+//======================================
+//find last process
+var checkIfLastProcess = (cb) => {
+  let stream = fs.createWriteStream(`./lastWorker.csv`, {flags: 'a'});
+  stream.write(`${process.pid},`);
+  stream.end( (err) => {
+    fs.readFile('./lastWorker.csv', 'utf8', (err, data) => {
+      data = data.split(',');
+      if (data.length - 1 === cpuCount) {
+        //console.log('last: ', process.pid)
+        exec('rm lastWorker.csv');
+        cb();
+      }
+
+    });
+  });
+}
 
 //======================================
 //function that inserts the specified number of rows, and global variables
 var count = 0;
-var totalSize = 2500000;
+var totalSize = 10000;
 var dbms = 'mysql';
 var wrapper = () => {
   if(count === 0) {
@@ -80,10 +98,13 @@ var wrapper = () => {
   //base case: if total size is reached, log the count and the time elapsed, exit the function
   if(count >= totalSize) {
     timer.stop();
-    DBMS.insertFromCSV(dbms, `dummyData`, () => {
-      console.log('count complete: ', count);
-      timer.stop();
+    checkIfLastProcess( () => {
+      DBMS.insertFromCSV(dbms, `dummyData`, () => {
+        console.log('count complete: ', (count * cpuCount));
+        timer.stop();
+      })
     })
+
     return;
   }
   //========
@@ -112,7 +133,6 @@ if (cluster.isWorker) {
   wrapper();
 } else {
   //master
-  var cpuCount = require('os').cpus().length;
   for (var i = 0; i < cpuCount; i++) {
     console.log(`worker ${i + 1} initiated`)
     cluster.fork();
