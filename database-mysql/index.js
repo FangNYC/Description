@@ -1,5 +1,6 @@
 const mysql = require('mysql');
 var mysqlConfig = require('../config.js');
+const DBMS = require('./DBMS.js');
 
 var password = require('../config.js').amazonPassword;
 
@@ -79,27 +80,29 @@ var insertAny = (numOfRows, callback, ...args) => {
   callback();
 }
 
-var insertFromCSV = (filename, cb) => {
-
+var insertFromCSV = (dbms, filename, cb) => {
   var loadData = () =>{
     var sql =`LOAD DATA LOCAL INFILE  './${filename}.csv'
-    INTO TABLE ${filename} 
+    INTO TABLE listing_description
     FIELDS TERMINATED BY ',' 
     LINES TERMINATED BY '\n';`
     connection.query(sql, (err) => {
-      console.log('data loaded');
+      // console.log('data loaded');
       if (err) console.log(err);
       else cb();
       connection.end();
     })
   }
-
-  var sql = `CREATE TABLE ${filename} (id INT(11) AUTO_INCREMENT NOT NULL, room_type MEDIUMTEXT, user_name MEDIUMTEXT, room_type_details MEDIUMTEXT, city MEDIUMTEXT, city_details MEDIUMTEXT, listing_details MEDIUMTEXT, guest_access_details MEDIUMTEXT, interaction_guests_details MEDIUMTEXT, other_details MEDIUMTEXT, PRIMARY KEY (id));`
-  connection.query(sql, (err) => {
-    console.log(filename, ' table added');
-    if (err) console.log(err);
-    else loadData();
-  })
+  if (filename !== 'dummyData') {
+    var sql = `CREATE TABLE ${filename} (id INT(11) AUTO_INCREMENT NOT NULL, room_type MEDIUMTEXT, user_name MEDIUMTEXT, room_type_details MEDIUMTEXT, city MEDIUMTEXT, city_details MEDIUMTEXT, listing_details MEDIUMTEXT, guest_access_details MEDIUMTEXT, interaction_guests_details MEDIUMTEXT, other_details MEDIUMTEXT, PRIMARY KEY (id));`
+    connection.query(sql, (err) => {
+      console.log(filename, ' table added');
+      if (err) console.log(err);
+      else loadData();
+    })
+  } else {
+    loadData();
+  }
 }
 
 module.exports.insertFromCSV = insertFromCSV;
