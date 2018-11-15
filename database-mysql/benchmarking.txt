@@ -14,8 +14,12 @@ time elapsed: 4 m :  49 s :  568 ms
 time elapsed: 4 m :  41 s :  55 ms
 
 
-Genrated and stored 400,000 records to MySQL
+Generated and stored 400,000 records to MySQL
 count complete:  400000
 time elapsed: 1 m :  19 s :  30 ms
 
 
+
+Generated and stored 400,000 records to Mongo
+count complete:  400000
+1 m :  38 s :  99 ms

@@ -1,6 +1,6 @@
 const { exec } = require('child_process');
 var runSchema = require('./runSchema.js');
-var {drop} = require('./mongoIndex');
+var MONGO = require('./mongoIndex');
 
 
 //========
@@ -24,9 +24,19 @@ var startProcess = () => {
     )
     
     promise.then(function() {
-      console.log('ready to seed MYSQL');
-      drop(() => {
+      console.log();
+      console.log('*******************');
+      console.log('ready to seed MYSQL')
+      console.log('*******************');
+      console.log();
+      MONGO.drop(() => {
+        MONGO.closeConnection();
+        console.log('Dropped Collection Listings-Collection');
+        console.log();
+        console.log('*******************');
         console.log('ready to seed MONGO')
+        console.log('*******************');
+        console.log();
       })
     });
   }

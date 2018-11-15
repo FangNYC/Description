@@ -66,45 +66,27 @@ timer.stop = () => {
   }
   console.log('time elapsed:', this.minutes, 'm : ', this.seconds, 's : ', this.milliseconds, 'ms');
 };
-//======================================
-//find last process
-var checkIfLastProcess = (cb) => {
-  let stream = fs.createWriteStream(`./lastWorker.csv`, {flags: 'a'});
-  stream.write(`${process.pid},`);
-  stream.end( (err) => {
-    fs.readFile('./lastWorker.csv', 'utf8', (err, data) => {
-      data = data.split(',');
-      if (data.length - 1 === cpuCount) {
-        //console.log('last: ', process.pid)
-        exec('rm lastWorker.csv');
-        cb();
-      }
-
-    });
-  });
-}
 
 //======================================
 //function that inserts the specified number of rows, and global variables
 var count = 0;
-var totalSize = 100;
+var totalSize = 400000;
+totalSize = totalSize / cpuCount;
 var dbms = 'mongo';
 var wrapper = () => {
   if(count === 0) {
     console.log('wrapper was invoked');
-    timer.start();
+    process.send({start: 'start'})
   }
   //========
   //base case: if total size is reached, log the count and the time elapsed, exit the function
   if(count >= totalSize) {
-    timer.stop();
-    checkIfLastProcess( () => {
-      DBMS.insertFromCSV(dbms, `dummyData`, () => {
-        console.log('count complete: ', (count * cpuCount));
-        timer.stop();
-      })
+    process.send({
+      stop: 'stop',
+      id: process.pid,
+      count
     })
-
+    process.kill(process.pid, 'SIGKILL');
     return;
   }
   //========
@@ -132,11 +114,31 @@ if (cluster.isWorker) {
       console.log('using listings database')
     });
   }
+  process.send({test: 5})
   wrapper();
 } else {
   //master
+  var workers = [];
   for (var i = 0; i < cpuCount; i++) {
     console.log(`worker ${i + 1} initiated`)
-    cluster.fork();
+    var worker = cluster.fork();
+    worker.on('message', (msg) => {
+      if(msg.start) {
+        timer.start();
+      }
+      if(msg.stop) {
+        timer.stop();
+      }
+      if(msg.id && msg.count) {
+        workers.push(msg.id);
+        console.log('worker #', workers.length)
+        if (workers.length === cpuCount) {
+          DBMS.insertFromCSV(dbms, `dummyData`, () => {
+            console.log('count complete: ', (msg.count * cpuCount));
+            timer.stop();
+          })
+        }
+      }
+    })
   }
 }

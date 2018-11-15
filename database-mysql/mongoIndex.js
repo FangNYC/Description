@@ -1,6 +1,8 @@
 //handles inserts and queries
 
 const { exec } = require('child_process');
+const MongoClient = require('mongodb').MongoClient;
+const url = `mongodb://localhost:27017/listing_description`;
 
 //========================
 //import:
@@ -14,14 +16,12 @@ exec(`mongoimport --db listing --collection listing-collection --type csv --igno
 
 var connectToListing = (databaseName, collectionName, callback) => {
     MongoClient.connect(url, (err, db) =>  {
-        console.log('!!!!!!!!!!!!!!!!')
         if (err) {
           console.log('connection error: ',err)
         } else {
           console.log('connected to  mongo');
           let listing = db.db(databaseName);
           listing.createCollection(collectionName, (err, collection) => {
-            console.log('we made it')
             if (err) console.log(err);
             else callback({collection, db});
             // db.close();
@@ -32,20 +32,41 @@ var connectToListing = (databaseName, collectionName, callback) => {
 };
 var connection;
 
+
 var drop = (callback) => {
-    console.log('being dropped')
-    connection.collection.drop();
-    if (callback) callback();
+    var promise = new Promise( (resolve) => {
+        connectToListing('listing', 'listing-collection', (data) => {
+            connection = data;
+            resolve();
+        })
+    });
+    promise.then( () => {
+        connection.collection.drop();
+        if (callback) callback();
+    });
 }
 
-var promise = new Promise( (resolve) => {
-    connectToListing('listing', 'listing-collection', (data) => {
-        connection = data;
-        resolve();
-    })
-});
-promise.then( () => {
-  drop()
-});
+var closeConnection = () => {
+    connection.db.close();
+    console.log('connection closed');
+}
 
+
+// var promise = new Promise( (resolve) => {
+//     connectToListing('listing', 'listing-collection', (data) => {
+//         connection = data;
+//         resolve();
+//     })
+// });
+// promise.then( () => {
+//     console.log('counting')
+//     connection.collection.countDocuments( (err, result) => {
+//         if (err) console.log(err)
+//         else console.log(result)
+//     });
+// });
+
+
+module.exports.closeConnection = closeConnection;
+module.exports.drop = drop;
 module.exports.insertFromCSV = insertFromCSV;
