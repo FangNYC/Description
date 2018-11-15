@@ -80,7 +80,7 @@ var insertAny = (numOfRows, callback, ...args) => {
   callback();
 }
 
-var insertFromCSV = (dbms, filename, cb) => {
+var insertFromCSV = (filename, cb) => {
   var loadData = () =>{
     var sql =`LOAD DATA LOCAL INFILE  './${filename}.csv'
     INTO TABLE listing_description
