@@ -20,6 +20,11 @@ time elapsed: 1 m :  19 s :  30 ms
 
 
 
-Generated and stored 400,000 records to Mongo
+Generated and stored 400,000 records to Mongo from 1 CSV
 count complete:  400000
 1 m :  38 s :  99 ms
+
+
+Generated and stored 400,000 records to Mongo from 4 CSVs
+count complete:  400000
+time elapsed: 1 m :  7 s :  693 ms
