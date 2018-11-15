@@ -87,8 +87,8 @@ var checkIfLastProcess = (cb) => {
 //======================================
 //function that inserts the specified number of rows, and global variables
 var count = 0;
-var totalSize = 10000;
-var dbms = 'mysql';
+var totalSize = 100;
+var dbms = 'mongo';
 var wrapper = () => {
   if(count === 0) {
     console.log('wrapper was invoked');

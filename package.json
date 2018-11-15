@@ -37,6 +37,7 @@
     "image-webpack-loader": "^4.4.0",
     "mdbreact": "^4.8.2",
     "module-example": "^1.0.0",
+    "mongodb": "^3.1.9",
     "mysql": "^2.13.0",
     "puppeteer": "^1.9.0",
     "react": "^15.4.2",
