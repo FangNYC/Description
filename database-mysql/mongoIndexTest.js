@@ -47,9 +47,13 @@ var connection;
 var find = (key, callback) => {
     connection.collection.find().toArray( (err, documents) => {
         if(err) console.log(err)
+        var once = false;
         documents.forEach( (document) => {
-            //console.log(document)
-            console.log(`${key}: `, document[key]);
+            if (once === false) {
+                once = true;
+                console.log(document);
+            }
+            // console.log(`${key}: `, document[key]);
         })
         console.log('find query was performed')
         if (callback) callback();
@@ -67,6 +71,7 @@ var insert = (document, callback) => {
     }) 
 }
 
+
 //drop a collection:
 var drop = (callback) => {
   console.log('being dropped')
@@ -74,7 +79,6 @@ var drop = (callback) => {
   if (callback) callback();
 }
 
-var test, test2, test3, test4, test5
 var promise = new Promise( (resolve) => {
     connectToListing('listing', 'listing-collection', (data) => {
         connection = data;
@@ -82,40 +86,51 @@ var promise = new Promise( (resolve) => {
     })
 });
 promise.then( () => {
-  test = new Promise( (resolve) => {
-      find('user_name', () => {
-          resolve();
-      });
-  });
+  find();
 });
-test.then( () => {
-  test2 = new Promise( (resolve) => {
-      insert(example, () => {
-        resolve();
-    });
-  });
-});
-test2.then( () => {
-  test3 = new Promise( (resolve) => {
-      find('user_name', () => {
-        resolve();
-    });
-  });
-});
-test3.then( () => {
-  test4 = new Promise( (resolve) => {
-      drop(() => {
-        resolve();
-    });
-  });
-});
-test4.then( () => {
-  test5 = new Promise( (resolve) => {
-      find('user_name', () => {
-        resolve();
-    });
-  });
-});
+
+// var test, test2, test3, test4, test5
+// var promise = new Promise( (resolve) => {
+//     connectToListing('listing', 'listing-collection', (data) => {
+//         connection = data;
+//         resolve();
+//     })
+// });
+// promise.then( () => {
+//   test = new Promise( (resolve) => {
+//       find('user_name', () => {
+//           resolve();
+//       });
+//   });
+// });
+// test.then( () => {
+//   test2 = new Promise( (resolve) => {
+//       insert(example, () => {
+//         resolve();
+//     });
+//   });
+// });
+// test2.then( () => {
+//   test3 = new Promise( (resolve) => {
+//       find('user_name', () => {
+//         resolve();
+//     });
+//   });
+// });
+// test3.then( () => {
+//   test4 = new Promise( (resolve) => {
+//       drop(() => {
+//         resolve();
+//     });
+//   });
+// });
+// test4.then( () => {
+//   test5 = new Promise( (resolve) => {
+//       find('user_name', () => {
+//         resolve();
+//     });
+//   });
+// });
 
 
 // //========================
