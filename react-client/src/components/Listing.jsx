@@ -34,7 +34,6 @@ class Listing extends React.Component {
 
 
 	render() {
-		console.log("T", this.props.listing)
 		return (
 			<div style={styles.container}>
 				<div style={styles.roomType}>
@@ -259,7 +258,7 @@ const styles = {
 		display: "flex",
 		backgroundColor: "#FFFFFF",
 		width: 648,
-		height: 136,
+		height: "auto",
 	}, iconeNameContainer: {
 		backgroundColor: "#FFFFFF",
 		flexDirection: 'column',
