@@ -1,5 +1,5 @@
 node_modules
 /config.js
 hrnyc18.pem
-database-mysql/dummyData.csv
+db/dummyData.csv
 *.csv

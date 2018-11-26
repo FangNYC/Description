@@ -51,15 +51,6 @@ var closeConnection = () => {
     console.log('connection closed');
 }
 
-// var selectById = (id, callback) => {
-//     connection.collection.find( {_id: id}).toArray((err, result) => {
-//         if(err) console.log(err)
-//         else console.log(result);
-//         console.log('findId query was performed')
-//         if (callback) callback();
-//     });
-// }
-
 
 var selectById = (id, callback) => {
     var promise = new Promise( (resolve) => {
@@ -70,28 +61,12 @@ var selectById = (id, callback) => {
     });
     promise.then( () => {
         connection.collection.find( {_id: id}).toArray((err, result) => {
-            // if(err) console.log(err)
-            // else console.log(result);
             console.log('findId query was performed')
+            closeConnection();
             if (callback) callback(err, result);
         });
     });
 }
-
-
-// var promise = new Promise( (resolve) => {
-//     connectToListing('listing', 'listing-collection', (data) => {
-//         connection = data;
-//         resolve();
-//     })
-// });
-// promise.then( () => {
-//     console.log('counting')
-//     connection.collection.countDocuments( (err, result) => {
-//         if (err) console.log(err)
-//         else console.log(result)
-//     });
-// });
 
 
 module.exports.selectById = selectById;
