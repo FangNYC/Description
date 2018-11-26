@@ -8,7 +8,7 @@ const url = `mongodb://localhost:27017/listing_description`;
 //import:
 
 var insertFromCSV = (filename, cb) => {
-exec(`mongoimport --db listing --collection listing-collection --type csv --ignoreBlanks --file ./${filename}.csv --fields user_name,room_type,room_type_details,city,city_details,listing_details,guest_access_details,interaction_guests_details,other_details`, (err, stdout, stderr) => {
+exec(`mongoimport --db listing --collection listing-collection --type csv --ignoreBlanks --file ./${filename}.csv --fields _id,user_name,room_type,room_type_details,city,city_details,listing_details,guest_access_details,interaction_guests_details,other_details`, (err, stdout, stderr) => {
     if (err) console.log(err);
     else cb();
 })
@@ -51,6 +51,33 @@ var closeConnection = () => {
     console.log('connection closed');
 }
 
+// var selectById = (id, callback) => {
+//     connection.collection.find( {_id: id}).toArray((err, result) => {
+//         if(err) console.log(err)
+//         else console.log(result);
+//         console.log('findId query was performed')
+//         if (callback) callback();
+//     });
+// }
+
+
+var selectById = (id, callback) => {
+    var promise = new Promise( (resolve) => {
+        connectToListing('listing', 'listing-collection', (data) => {
+            connection = data;
+            resolve();
+        })
+    });
+    promise.then( () => {
+        connection.collection.find( {_id: id}).toArray((err, result) => {
+            // if(err) console.log(err)
+            // else console.log(result);
+            console.log('findId query was performed')
+            if (callback) callback(err, result);
+        });
+    });
+}
+
 
 // var promise = new Promise( (resolve) => {
 //     connectToListing('listing', 'listing-collection', (data) => {
@@ -67,6 +94,7 @@ var closeConnection = () => {
 // });
 
 
+module.exports.selectById = selectById;
 module.exports.closeConnection = closeConnection;
 module.exports.drop = drop;
 module.exports.insertFromCSV = insertFromCSV;

@@ -1,6 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var db = require('../database-mysql');
+var MONGO = require('../database-mysql/mongoIndex.js')
 var path = require('path');
 
 var app = express();
@@ -9,11 +10,11 @@ app.use(express.static(__dirname + '/../react-client/dist'));
 
 app.get('/description', function(req, res) {
 	var id = Number(req.query.id)
-	db.selectAll(id, function(err, result){
+	MONGO.selectById(id, function(err, result){
 		if(err){
 			console.log(err)
 		}else{
-			var listing = JSON.parse(JSON.stringify(result))
+			var listing = result;
 			res.send(listing)
 		}
 	})

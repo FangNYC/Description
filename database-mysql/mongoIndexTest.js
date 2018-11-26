@@ -79,6 +79,26 @@ var drop = (callback) => {
   if (callback) callback();
 }
 
+
+var findId = (id, callback) => {
+//db.inventory.find( { status: "D" } )
+connection.collection.find( {_id: id}).toArray((err, result) => {
+    if(err) console.log(err)
+    else console.log(result);
+    // var once = false;
+    // result.forEach( (document) => {
+    //     console.log('query successful')
+    //     if (once === false) {
+    //         once = true;
+    //         console.log(document);
+    //     }
+    //     // console.log(`${key}: `, document[key]);
+    // })
+    console.log('findId query was performed')
+    if (callback) callback();
+});
+}
+
 var promise = new Promise( (resolve) => {
     connectToListing('listing', 'listing-collection', (data) => {
         connection = data;
@@ -86,7 +106,7 @@ var promise = new Promise( (resolve) => {
     })
 });
 promise.then( () => {
-  find();
+  findId(9000000);
 });
 
 // var test, test2, test3, test4, test5

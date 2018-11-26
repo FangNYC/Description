@@ -259,7 +259,7 @@ const styles = {
 		display: "flex",
 		backgroundColor: "#FFFFFF",
 		width: 648,
-		height: 136,
+		height: "auto",
 	}, iconeNameContainer: {
 		backgroundColor: "#FFFFFF",
 		flexDirection: 'column',

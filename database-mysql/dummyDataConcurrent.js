@@ -11,13 +11,13 @@ const DBMS = require('./DBMS.js');
 const cluster = require('cluster');
 const cpuCount = require('os').cpus().length;
 var workerNum;
+var startId;
 
 //======================================
 //constructor function that generates random realistic data
 function Data() {
   this.name = random.buildName();
-  this.roomType = random.buildRoom;
-  this.roomType = this.roomType[Math.floor(Math.random() * this.roomType.length)];
+  this.roomType = random.buildRoom();
   this.roomTypeDetails = random.buildPar(40);
   this.city = faker.address.city();
   this.cityDetails = random.buildPar(375);
@@ -32,12 +32,14 @@ var saveRows = (numOfRows, callback) => {
   var str = '';
   for (var i =0; i < numOfRows; i++) {
     var data = new Data;
-    str = str + data.name + ', ' + data.roomType + ', ' + data.roomTypeDetails + ', ' + data.city + ', ' + data.cityDetails + ', ' + data.listingDetails + ', ' + data.guestAccessDetails + ', ' + data.interactionGuestsDetails + ', ' + data.otherDetails + ',' + '\n';
+    count++
+    var id = startId + count;
+    str = str + id + ', ' + data.name + ', ' + data.roomType + ', ' + data.roomTypeDetails + ', ' + data.city + ', ' + data.cityDetails + ', ' + data.listingDetails + ', ' + data.guestAccessDetails + ', ' + data.interactionGuestsDetails + ', ' + data.otherDetails + ',' + '\n';
   }
   let stream = fs.createWriteStream(`./dummyData${workerNum}.csv`, {flags: 'a'});
   stream.write(str);
   stream.end( () => {
-    count += numOfRows;
+    // count += numOfRows;
       callback();
   });
 }
@@ -70,7 +72,7 @@ timer.stop = () => {
 //======================================
 //function that inserts the specified number of rows, and global variables
 var count = 0;
-var totalSize = 1000;
+var totalSize = 10000000;
 totalSize = totalSize / cpuCount;
 var dbms = 'mongo';
 var wrapper = () => {
@@ -123,7 +125,11 @@ if (cluster.isWorker) {
     });
   }
   process.send({test: 5})
-  promise.then(() => wrapper());
+  promise.then(() => {
+    startId = totalSize * (workerNum - 1);
+    console.log('startId', startId)
+    wrapper()
+  });
 } else {
   //master
   var workers = [];
