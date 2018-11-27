@@ -3,3 +3,4 @@ node_modules
 hrnyc18.pem
 db/dummyData.csv
 *.csv
+newrelic.js
