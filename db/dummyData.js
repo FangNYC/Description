@@ -4,9 +4,7 @@
 const { exec } = require('child_process');
 const random = require('./randomData.js');
 const faker = require('faker');
-const db = require('./index.js');
 const fs = require('fs');
-const runSchema = require('./runSchema.js');
 const DBMS = require('./DBMS.js');
 const cluster = require('cluster');
 const cpuCount = require('os').cpus().length;
@@ -118,12 +116,6 @@ if (cluster.isWorker) {
       }
     })
   })
-  if (dbms === 'mysql') {
-    runSchema.useDB(
-    () => {
-      console.log('using listings database')
-    });
-  }
   process.send({test: 5})
   promise.then(() => {
     startId = totalSize * (workerNum - 1);

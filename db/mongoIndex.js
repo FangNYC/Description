@@ -3,6 +3,7 @@
 const { exec } = require('child_process');
 const MongoClient = require('mongodb').MongoClient;
 const url = `mongodb://localhost:27017/listing_description`;
+const server = require('../server/index.js');
 
 //========================
 //import:
@@ -19,18 +20,15 @@ var connectToListing = (databaseName, collectionName, callback) => {
         if (err) {
           console.log('connection error: ',err)
         } else {
-          console.log('connected to  mongo');
+          //console.log('connected to  mongo');
           let listing = db.db(databaseName);
           listing.createCollection(collectionName, (err, collection) => {
             if (err) console.log(err);
             else callback({collection, db});
-            // db.close();
-            // console.log('connection closed');
           })
         }
     })
 };
-var connection;
 
 
 var drop = (callback) => {
@@ -48,27 +46,18 @@ var drop = (callback) => {
 
 var closeConnection = () => {
     connection.db.close();
-    console.log('connection closed');
+    //console.log('connection closed');
 }
 
 
 var selectById = (id, callback) => {
-    var promise = new Promise( (resolve) => {
-        connectToListing('listing', 'listing-collection', (data) => {
-            connection = data;
-            resolve();
-        })
-    });
-    promise.then( () => {
-        connection.collection.find( {_id: id}).toArray((err, result) => {
-            console.log('findId query was performed')
-            closeConnection();
-            if (callback) callback(err, result);
-        });
+    server.connection.collection.findOne( {_id: id}, (err, result) => {
+        if (callback) callback(err, result);
     });
 }
 
 
+module.exports.connectToListing = connectToListing;
 module.exports.selectById = selectById;
 module.exports.closeConnection = closeConnection;
 module.exports.drop = drop;
