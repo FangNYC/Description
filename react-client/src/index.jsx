@@ -10,7 +10,6 @@ class App extends React.Component {
       listing: {}
     }
   }
-
   componentDidMount() {
     const port = process.env.PORT || 4001;
     var ID = window.location.href.split('id=').pop()
@@ -22,7 +21,7 @@ class App extends React.Component {
       })
         .then(({ data }) => {
           this.setState({
-            listing: data[0]
+            listing: data
           })
         })
     }
@@ -36,5 +35,4 @@ class App extends React.Component {
     )
   }
 }
-
 window.Description = App;

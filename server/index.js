@@ -1,16 +1,17 @@
-require('newrelic');
+// require('newrelic');
 
 var express = require('express');
 var bodyParser = require('body-parser');
 var MONGO = require('../db/mongoIndex.js')
 var path = require('path');
-
+var connection;
 var app = express();
 app.use(express.static(__dirname + '/../react-client/dist'));
 
 app.get('/description', function(req, res) {
+	console.log('description')
 	var id = Number(req.query.id)
-	MONGO.selectById(id, function(err, result){
+	MONGO.selectById(connection, id, function(err, result){
 		if(err){
 			console.log(err)
 		}else{
@@ -21,6 +22,7 @@ app.get('/description', function(req, res) {
 
 
 app.get('/listing', function(req, res) {
+	console.log('listing')
 		res.sendFile(path.join(__dirname, '/../react-client/dist/index.html'))
 });
 
@@ -29,7 +31,7 @@ console.log('index hit')
 app.listen(process.env.PORT || 4000, function() {
   console.log(`listening on port ${process.env.PORT || 4000}`);
   MONGO.connectToListing('listing', 'listing-collection', (data) => {
-	let connection = data;
+	connection = data;
 	module.exports.connection = connection;
   })
 });

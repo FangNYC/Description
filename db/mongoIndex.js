@@ -1,10 +1,7 @@
 //handles inserts and queries
-
 const { exec } = require('child_process');
 const MongoClient = require('mongodb').MongoClient;
 const url = `mongodb://localhost:27017/listing_description`;
-const server = require('../server/index.js');
-
 //========================
 //import:
 
@@ -50,8 +47,9 @@ var closeConnection = () => {
 }
 
 
-var selectById = (id, callback) => {
-    server.connection.collection.findOne( {_id: id}, (err, result) => {
+
+var selectById = (connection, id, callback) => {
+    connection.collection.findOne( {_id: id}, (err, result) => {
         if (callback) callback(err, result);
     });
 }

@@ -1,16 +1,16 @@
 //======================================
 //estimated time to completion: 30.32 minutes
 //======================================
-const { exec } = require('child_process');
-const random = require('./randomData.js');
-const faker = require('faker');
-const fs = require('fs');
-const DBMS = require('./DBMS.js');
-const cluster = require('cluster');
-const cpuCount = require('os').cpus().length;
-var workerNum;
-var startId;
 
+const { exec } = require('child_process');//
+const random = require('./randomData.js');//
+const faker = require('faker');//
+const fs = require('fs');//
+const DBMS = require('./DBMS.js');//
+const cluster = require('cluster');//
+const cpuCount = require('os').cpus().length;//
+var workerNum;//
+var startId;//
 //======================================
 //constructor function that generates random realistic data
 function Data() {
