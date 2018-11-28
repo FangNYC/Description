@@ -9,7 +9,6 @@ var app = express();
 app.use(express.static(__dirname + '/../react-client/dist'));
 
 app.get('/description', function(req, res) {
-	console.log('description')
 	var id = Number(req.query.id)
 	MONGO.selectById(connection, id, function(err, result){
 		if(err){
@@ -22,7 +21,6 @@ app.get('/description', function(req, res) {
 
 
 app.get('/listing', function(req, res) {
-	console.log('listing')
 		res.sendFile(path.join(__dirname, '/../react-client/dist/index.html'))
 });
 
@@ -35,4 +33,3 @@ app.listen(process.env.PORT || 4000, function() {
 	module.exports.connection = connection;
   })
 });
-
