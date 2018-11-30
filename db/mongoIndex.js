@@ -1,7 +1,8 @@
 //handles inserts and queries
 const { exec } = require('child_process');
 const MongoClient = require('mongodb').MongoClient;
-const url = `mongodb://localhost:27017/listing_description`;
+// const url = `mongodb://localhost:27017/listing_description`;
+const url = `mongodb://174.138.58.95/listing_description`;
 //========================
 //import:
 
@@ -13,11 +14,14 @@ exec(`mongoimport --db listing --collection listing-collection --type csv --igno
 }
 
 var connectToListing = (databaseName, collectionName, callback) => {
+    console.log('connect to listing invoked')
     MongoClient.connect(url, (err, db) =>  {
         if (err) {
+            console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+            console.log()
           console.log('connection error: ',err)
         } else {
-          //console.log('connected to  mongo');
+          console.log('connected to  mongo');
           let listing = db.db(databaseName);
           listing.createCollection(collectionName, (err, collection) => {
             if (err) console.log(err);
@@ -49,6 +53,7 @@ var closeConnection = () => {
 
 
 var selectById = (connection, id, callback) => {
+    //console.log(connection)
     connection.collection.findOne( {_id: id}, (err, result) => {
         if (callback) callback(err, result);
     });

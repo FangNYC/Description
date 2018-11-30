@@ -71,6 +71,7 @@ timer.stop = () => {
 //function that inserts the specified number of rows, and global variables
 var count = 0;
 var totalSize = 10000000;
+totalSize = Math.ceil(totalSize/250/cpuCount)*(250*cpuCount);
 totalSize = totalSize / cpuCount;
 var dbms = 'mongo';
 var wrapper = () => {
